@@ -12,12 +12,11 @@ const Hero = () => {
         offset: ["start start", "end end"]
     });
 
-    const smoothProgress = useSpring(scrollYProgress, { stiffness: 50, damping: 15 });
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 40, damping: 20 });
 
     // Update active section logic
     useMotionValueEvent(scrollY, "change", (latest) => {
         const height = window.innerHeight;
-        // Breakpoints for 3 sections within 300vh
         if (latest < height * 0.9) {
             setActiveSection(0);
         } else if (latest < height * 1.9) {
@@ -29,29 +28,29 @@ const Hero = () => {
 
     // --- Parallax & Animations ---
 
-    // Enhanced Background Movement
-    const circleBlueY = useTransform(smoothProgress, [0, 1], [0, 400]);
-    const circleMintY = useTransform(smoothProgress, [0, 1], [0, -400]);
+    // Enhanced Background Movement - Dramatic movements
+    const circleBlueY = useTransform(smoothProgress, [0, 1], [0, 500]);
+    const circleMintY = useTransform(smoothProgress, [0, 1], [0, -500]);
 
-    // Tools Animation Helper
+    // Tools Animation Helper with stronger scale and rotation
     const useToolAnimation = (initial, final, rotation) => {
         const x = useTransform(smoothProgress, [0, 1], [initial.x, final.x]);
         const y = useTransform(smoothProgress, [0, 1], [initial.y, final.y]);
         const rotate = useTransform(smoothProgress, [0, 1], [0, rotation]);
-        const scale = useTransform(smoothProgress, [0, 0.5, 1], [1, 1.2, 1]); // Subtle pulse
+        const scale = useTransform(smoothProgress, [0, 0.5, 1], [1, 1.15, 1]);
         return { x, y, rotate, scale };
     };
 
-    // Configuration for Tools (More explicit colors, bigger movements)
+    // Configuration for Tools - High Visibility & Commercial Look
     const tools = [
-        { Icon: Wrench, color: "text-primary", opacity: "opacity-75", init: { x: -150, y: -100 }, final: { x: -600, y: -400 }, rot: -120 },
-        { Icon: Plug, color: "text-slate-700", opacity: "opacity-60", init: { x: 150, y: -120 }, final: { x: 600, y: -350 }, rot: 180 },
-        { Icon: Cable, color: "text-accent", opacity: "opacity-80", init: { x: -100, y: 150 }, final: { x: -500, y: 500 }, rot: 240 },
-        { Icon: Link2, color: "text-primary", opacity: "opacity-70", init: { x: 120, y: 180 }, final: { x: 450, y: 450 }, rot: -180 },
-        { Icon: Hammer, color: "text-slate-400", opacity: "opacity-60", init: { x: -250, y: 0 }, final: { x: -700, y: 100 }, rot: 360 },
-        { Icon: Lightbulb, color: "text-accent", opacity: "opacity-90", init: { x: 250, y: 50 }, final: { x: 700, y: 200 }, rot: -90 },
-        { Icon: Box, color: "text-primary", opacity: "opacity-65", init: { x: 0, y: -200 }, final: { x: 0, y: -600 }, rot: 90 },
-        { Icon: Zap, color: "text-slate-600", opacity: "opacity-70", init: { x: 0, y: 250 }, final: { x: 0, y: 600 }, rot: -270 },
+        { Icon: Wrench, color: "text-primary", opacity: "opacity-90", init: { x: -160, y: -120 }, final: { x: -650, y: -450 }, rot: -140 },
+        { Icon: Plug, color: "text-[#4a5568]", opacity: "opacity-80", init: { x: 160, y: -140 }, final: { x: 650, y: -400 }, rot: 200 },
+        { Icon: Cable, color: "text-accent", opacity: "opacity-95", init: { x: -120, y: 160 }, final: { x: -550, y: 550 }, rot: 260 },
+        { Icon: Link2, color: "text-primary", opacity: "opacity-85", init: { x: 140, y: 200 }, final: { x: 500, y: 500 }, rot: -200 },
+        { Icon: Hammer, color: "text-[#718096]", opacity: "opacity-75", init: { x: -280, y: 20 }, final: { x: -750, y: 150 }, rot: 380 },
+        { Icon: Lightbulb, color: "text-accent", opacity: "opacity-100", init: { x: 280, y: 60 }, final: { x: 750, y: 250 }, rot: -110 },
+        { Icon: Box, color: "text-primary", opacity: "opacity-80", init: { x: 0, y: -220 }, final: { x: 0, y: -650 }, rot: 110 },
+        { Icon: Zap, color: "text-[#2d3748]", opacity: "opacity-85", init: { x: 0, y: 280 }, final: { x: 0, y: 650 }, rot: -290 },
     ];
 
     const titles = [
@@ -62,28 +61,38 @@ const Hero = () => {
 
     return (
         <React.Fragment>
-            <section ref={containerRef} id="hero" className="relative h-[300vh] bg-white">
+            <section ref={containerRef} id="hero" className="relative h-[300vh] bg-warmGray-100 overflow-hidden">
                 <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center">
 
-                    {/* 1. Enhanced Background Layers */}
+                    {/* --- 1. Commercial Background Layering --- */}
 
-                    {/* Base Subtle Pattern */}
-                    <div className="absolute inset-0 bg-[radial-gradient(#36558F_1.5px,transparent_1.5px)] [background-size:30px_30px] opacity-[0.03] pointer-events-none" />
+                    {/* Base Gradient - Warm & Subtle */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-warmGray-50 via-warmGray-100 to-warmGray-150 pointer-events-none" />
 
-                    {/* Dramatic Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-white via-50% to-accent/15 opacity-100 pointer-events-none" />
+                    {/* Subtle Texture - Diagonal Lines */}
+                    <div className="absolute inset-0 bg-[radial-gradient(#36558F_0.5px,transparent_0.8px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none" />
 
-                    {/* Animated Deep Blurred Circles - More Visible */}
+                    {/* Dramatic Blurred Orbs - VISIBLE & VIBRANT */}
                     <motion.div
                         style={{ y: circleBlueY }}
-                        className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-3xl pointer-events-none mix-blend-multiply"
+                        className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-primary/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply opacity-60"
                     />
                     <motion.div
                         style={{ y: circleMintY }}
-                        className="absolute bottom-[-10%] right-[-10%] w-[900px] h-[900px] bg-accent/30 rounded-full blur-3xl pointer-events-none mix-blend-multiply"
+                        className="absolute bottom-[-10%] right-[-10%] w-[900px] h-[900px] bg-accent/40 rounded-full blur-[100px] pointer-events-none mix-blend-multiply opacity-70"
                     />
 
-                    {/* 2. Floating Tools - High Visibility & Drama */}
+                    {/* Decorative Geometric Elements */}
+                    <div className="absolute left-[10%] top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
+                    <div className="absolute right-[10%] top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
+
+                    <motion.div
+                        animate={{ y: [0, -30, 0], opacity: [0.2, 0.5, 0.2] }}
+                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute top-[20%] right-[15%] w-3 h-3 rounded-full bg-primary/20 pointer-events-none"
+                    />
+
+                    {/* --- 2. Floating Tools with Commercial Depth --- */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                         {tools.map((item, index) => {
                             const anim = useToolAnimation(item.init, item.final, item.rot);
@@ -91,48 +100,45 @@ const Hero = () => {
                                 <motion.div
                                     key={index}
                                     style={anim}
-                                    className={`absolute ${item.color} ${item.opacity} drop-shadow-lg`}
+                                    className={`absolute ${item.color} ${item.opacity} filter drop-shadow-[0_15px_25px_rgba(54,85,143,0.15)]`}
                                 >
-                                    {/* Responsive Icon Sizes */}
                                     <item.Icon
-                                        strokeWidth={1.2}
-                                        className="w-20 h-20 md:w-28 md:h-28 lg:w-32 lg:h-32"
+                                        strokeWidth={1.5}
+                                        className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40"
                                     />
                                 </motion.div>
                             );
                         })}
                     </div>
 
-                    {/* 3. Main Content - High Contrast Typography */}
+                    {/* --- 3. Typography & Messaging (High Contrast) --- */}
                     <div className="relative z-30 w-full max-w-7xl mx-auto px-6 text-center">
-                        <div className="h-[250px] md:h-[350px] relative flex items-center justify-center">
+                        <div className="h-[280px] md:h-[380px] relative flex items-center justify-center">
                             <AnimatePresence mode="wait">
                                 {titles.map((t, index) => (
                                     activeSection === index && (
                                         <motion.div
                                             key={index}
-                                            initial={{ opacity: 0, scale: 0.9, y: 30, filter: "blur(8px)" }}
+                                            initial={{ opacity: 0, scale: 0.95, y: 40, filter: "blur(10px)" }}
                                             animate={{
                                                 opacity: 1,
                                                 scale: 1,
                                                 y: 0,
                                                 filter: "blur(0px)",
-                                                rotateX: 0
                                             }}
                                             exit={{
                                                 opacity: 0,
-                                                scale: 1.1,
-                                                y: -30,
-                                                filter: "blur(8px)",
-                                                rotateX: 10
+                                                scale: 1.05,
+                                                y: -40,
+                                                filter: "blur(10px)",
                                             }}
-                                            transition={{ duration: 0.8, ease: "circOut" }}
+                                            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                                             className="absolute w-full flex flex-col items-center"
                                         >
-                                            <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold text-primary tracking-tight leading-[0.9] drop-shadow-sm mb-6">
+                                            <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold text-primary tracking-tight leading-[0.9] drop-shadow-[0_4px_10px_rgba(54,85,143,0.1)] mb-6">
                                                 {t.main}
                                             </h1>
-                                            <h2 className="text-4xl md:text-5xl font-light text-primary/80 tracking-wide">
+                                            <h2 className="text-3xl md:text-5xl font-light text-primary/80 tracking-wide drop-shadow-sm">
                                                 {t.sub}
                                             </h2>
                                         </motion.div>
@@ -141,41 +147,33 @@ const Hero = () => {
                             </AnimatePresence>
                         </div>
 
-                        {/* Stabilized CTA Section */}
+                        {/* CTA Section */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6, duration: 0.8 }}
-                            className="relative mt-8 md:mt-12 flex flex-col items-center"
+                            transition={{ delay: 0.4, duration: 0.8 }}
+                            className="relative mt-10 md:mt-16 flex flex-col items-center"
                         >
                             <a
                                 href="#quote"
-                                className="group relative bg-primary text-white text-lg md:text-xl font-medium px-12 py-5 shadow-[0_20px_40px_-15px_rgba(54,85,143,0.3)] hover:shadow-[0_25px_50px_-12px_rgba(54,85,143,0.5)] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+                                className="group relative bg-[#36558F] text-white text-lg md:text-xl font-medium px-14 py-6 shadow-[0_20px_50px_-12px_rgba(54,85,143,0.4)] hover:shadow-[0_30px_60px_-12px_rgba(54,85,143,0.6)] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden rounded-sm"
                             >
-                                <span className="relative z-10">Solicitar Cotización</span>
-                                <div className="absolute inset-0 bg-black/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                                <span className="relative z-10 tracking-wide">SOLICITAR COTIZACIÓN</span>
+                                <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
                             </a>
-
-                            {/* Decorative line under CTA */}
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: 100 }}
-                                transition={{ delay: 1, duration: 1 }}
-                                className="h-[1px] bg-primary/20 mt-8"
-                            />
                         </motion.div>
                     </div>
 
-                    {/* 4. Elegant Scroll Indicator */}
+                    {/* --- 4. Premium Scroll Indicator --- */}
                     <motion.div
                         animate={{ opacity: activeSection === 2 ? 0 : 1 }}
-                        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20"
+                        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-5 z-20"
                     >
-                        <span className="text-primary/60 text-xs md:text-sm font-semibold tracking-[0.2em] uppercase">Explorar</span>
-                        <div className="w-[2px] h-16 bg-gradient-to-b from-primary/10 via-primary/40 to-primary/0 rounded-full overflow-hidden">
+                        <span className="text-primary/50 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase">Scroll</span>
+                        <div className="w-[1px] h-20 bg-gradient-to-b from-primary/5 via-primary/30 to-primary/5 overflow-hidden">
                             <motion.div
-                                animate={{ y: [-64, 64] }}
-                                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                                animate={{ y: [-80, 80] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                                 className="w-full h-1/2 bg-primary"
                             />
                         </div>
@@ -185,12 +183,9 @@ const Hero = () => {
             </section>
 
             {/* 5. Seamless Transition Section */}
-            <section className="py-24 bg-gradient-to-b from-white to-[#F5F9FA] flex flex-col items-center justify-center relative z-10">
-                <div className="text-center opacity-70 hover:opacity-100 transition-opacity duration-500">
-                    <div className="p-4 rounded-full bg-primary/5 mb-6 inline-block">
-                        <ArrowDown className="text-primary" size={32} />
-                    </div>
-                    <p className="text-primary text-2xl font-light tracking-wide">Descubre la excelencia en cada detalle</p>
+            <section className="py-24 bg-warmGray-100 flex flex-col items-center justify-center relative z-10 border-t border-primary/5">
+                <div className="text-center opacity-60 hover:opacity-90 transition-opacity duration-500">
+                    <p className="text-primary text-2xl font-light tracking-wide italic font-serif">"Calidad que energiza tus proyectos"</p>
                 </div>
             </section>
         </React.Fragment>

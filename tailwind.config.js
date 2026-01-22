@@ -10,6 +10,12 @@ export default {
                 primary: "#36558F", // azul profundo
                 secondary: "#FFFFFF", // blanco
                 accent: "#C5E0D8", // menta suave
+                warmGray: {
+                    50: '#FAF9F8',
+                    100: '#F8F7F5',
+                    150: '#F5F3F1',
+                    200: '#F0EEEB',
+                },
             },
             fontFamily: {
                 sans: ["Inter", "system-ui", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
