@@ -7,23 +7,21 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#36558F", // azul profundo
-                secondary: "#FFFFFF", // blanco
-                accent: "#C5E0D8", // menta suave
-                warmGray: {
-                    50: '#FAF9F8',
-                    100: '#F8F7F5',
-                    150: '#F5F3F1',
-                    200: '#F0EEEB',
-                },
+                primary: "#1A2847",      // Azul oscuro profundo
+                secondary: "#2D3E50",    // Gris charcoal
+                accent: "#C5E0D8",       // Menta suave (Brand legacy)
+                electric: "#00D4FF",     // Cian eléctrico (New)
+                energy: "#FF6B35",       // Naranja energético (CTA)
+                light: "#F3F4F7",        // Gris claro comercial (Background)
+                darkBg: "#0F1922",       // Fondo muy oscuro
             },
             fontFamily: {
                 sans: ["Inter", "system-ui", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
             },
             fontSize: {
-                '2xl': '24px', // Body
-                '7xl': '48px', // H2
-                '9xl': '96px', // H1
+                '2xl': '24px',
+                '7xl': '48px',
+                '9xl': '96px',
             },
         },
     },

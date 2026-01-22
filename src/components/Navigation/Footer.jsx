@@ -1,73 +1,78 @@
 import React from 'react';
-import { Zap, Facebook, Instagram, Twitter, Linkedin, MapPin, Phone, Mail } from 'lucide-react';
+import { Zap, Facebook, Instagram, Twitter, Linkedin, MapPin, Phone, Mail, ArrowRight } from 'lucide-react';
 
 const Footer = () => {
     return (
-        <footer className="bg-white pt-20 pb-10 border-t border-gray-100">
-            <div className="container mx-auto px-6">
+        <footer className="bg-darkBg text-white pt-20 pb-10 border-t border-white/5 font-sans relative overflow-hidden">
+            {/* Decorative Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+
+            <div className="container mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2 text-primary font-bold text-2xl">
-                            <Zap className="fill-primary" /> Punto Electro
+                        <div className="flex items-center gap-2 text-white font-bold text-2xl">
+                            <div className="bg-electric p-1.5 rounded text-primary">
+                                <Zap size={20} fill="currentColor" />
+                            </div>
+                            Punto Electro
                         </div>
-                        <p className="text-gray-500 leading-relaxed">
-                            Liderando la innovación en distribución de materiales eléctricos y soluciones técnicas para la industria moderna.
+                        <p className="text-gray-400 leading-relaxed text-sm">
+                            Potenciando la industria con soluciones eléctricas de vanguardia. Distribución certificada y soporte técnico especializado.
                         </p>
                         <div className="flex space-x-4">
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-all"><Facebook size={18} /></a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-all"><Instagram size={18} /></a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-all"><Linkedin size={18} /></a>
+                            <a href="#" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-electric hover:text-primary transition-all duration-300"><Facebook size={18} /></a>
+                            <a href="#" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-electric hover:text-primary transition-all duration-300"><Instagram size={18} /></a>
+                            <a href="#" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-electric hover:text-primary transition-all duration-300"><Linkedin size={18} /></a>
                         </div>
                     </div>
 
                     {/* Links */}
                     <div>
-                        <h4 className="font-bold text-gray-900 mb-6">Navegación</h4>
-                        <ul className="space-y-4 text-gray-500">
-                            <li><a href="#hero" className="hover:text-primary transition-colors">Inicio</a></li>
-                            <li><a href="#products" className="hover:text-primary transition-colors">Catálogo</a></li>
-                            <li><a href="#quote" className="hover:text-primary transition-colors">Cotizar</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Nosotros</a></li>
+                        <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm border-b border-electric/30 inline-block pb-1">Navegación</h4>
+                        <ul className="space-y-3 text-gray-400 text-sm">
+                            <li><a href="#hero" className="hover:text-electric transition-colors flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /> Inicio</a></li>
+                            <li><a href="#products" className="hover:text-electric transition-colors flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /> Catálogo</a></li>
+                            <li><a href="#quote" className="hover:text-electric transition-colors flex items-center gap-2 group"><ArrowRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" /> Cotizar</a></li>
                         </ul>
                     </div>
 
                     {/* Services */}
                     <div>
-                        <h4 className="font-bold text-gray-900 mb-6">Servicios</h4>
-                        <ul className="space-y-4 text-gray-500">
-                            <li><a href="#" className="hover:text-primary transition-colors">Asesoría Técnica</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Proyectos Industriales</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Instalaciones</a></li>
-                            <li><a href="#" className="hover:text-primary transition-colors">Mantenimiento</a></li>
+                        <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm border-b border-electric/30 inline-block pb-1">Servicios</h4>
+                        <ul className="space-y-3 text-gray-400 text-sm">
+                            <li className="hover:text-electric cursor-pointer transition-colors">Ingeniería Eléctrica</li>
+                            <li className="hover:text-electric cursor-pointer transition-colors">Tableros a Medida</li>
+                            <li className="hover:text-electric cursor-pointer transition-colors">Domótica Industrial</li>
+                            <li className="hover:text-electric cursor-pointer transition-colors">Certificación SEC</li>
                         </ul>
                     </div>
 
                     {/* Contact */}
                     <div>
-                        <h4 className="font-bold text-gray-900 mb-6">Contacto</h4>
-                        <ul className="space-y-4 text-gray-500">
-                            <li className="flex items-start gap-3">
-                                <MapPin className="text-primary mt-1 shrink-0" size={18} />
-                                <span>Av. Libertador 1234, Ciudad Empresarial, Santiago</span>
+                        <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm border-b border-electric/30 inline-block pb-1">Contacto</h4>
+                        <ul className="space-y-4 text-gray-400 text-sm">
+                            <li className="flex items-start gap-3 group cursor-pointer hover:text-white transition-colors">
+                                <MapPin className="text-electric mt-0.5 shrink-0 group-hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.8)] transition-all" size={16} />
+                                <span>Parque Industrial Eje Norte,<br />Av. La Montaña 775, Santiago</span>
                             </li>
-                            <li className="flex items-center gap-3">
-                                <Phone className="text-primary shrink-0" size={18} />
-                                <span>+56 2 2345 6789</span>
+                            <li className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
+                                <Phone className="text-electric shrink-0 group-hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.8)] transition-all" size={16} />
+                                <span>+56 2 2555 9090</span>
                             </li>
-                            <li className="flex items-center gap-3">
-                                <Mail className="text-primary shrink-0" size={18} />
-                                <span>contacto@puntoelectro.com</span>
+                            <li className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
+                                <Mail className="text-electric shrink-0 group-hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.8)] transition-all" size={16} />
+                                <span>ventas@puntoelectro.cl</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-                    <p>&copy; 2024 Punto Electro. Todos los derechos reservados.</p>
+                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                    <p>&copy; 2026 Punto Electro Ingeniería y Servicios. Todos los derechos reservados.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" className="hover:text-primary">Términos</a>
-                        <a href="#" className="hover:text-primary">Privacidad</a>
+                        <a href="#" className="hover:text-electric transition-colors">Términos y Condiciones</a>
+                        <a href="#" className="hover:text-electric transition-colors">Política de Privacidad</a>
                     </div>
                 </div>
             </div>

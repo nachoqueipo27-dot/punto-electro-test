@@ -12,30 +12,30 @@ const Navbar = () => {
     });
 
     return (
-        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-secondary/95 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
+        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-primary/95 backdrop-blur-md shadow-lg py-4 border-b border-white/5' : 'bg-transparent py-6'}`}>
             <div className="container mx-auto px-6 flex justify-between items-center">
                 <a href="#" className="flex items-center gap-2 group">
-                    <div className="bg-primary p-2 rounded-lg text-white group-hover:scale-105 transition-transform duration-300">
+                    <div className="bg-electric p-2 rounded-lg text-primary group-hover:shadow-[0_0_15px_rgba(0,212,255,0.5)] transition-all duration-300">
                         <Zap size={24} fill="currentColor" />
                     </div>
-                    <span className={`font-bold text-2xl tracking-tight transition-colors duration-300 ${scrolled ? 'text-primary' : 'text-white'}`}>
+                    <span className="font-bold text-2xl tracking-tight text-white group-hover:text-electric transition-colors duration-300">
                         Punto Electro
                     </span>
                 </a>
 
                 {/* Desktop Menu */}
-                <div className={`hidden md:flex space-x-8 font-medium transition-colors duration-300 ${scrolled ? 'text-gray-600' : 'text-white/90'}`}>
-                    <a href="#hero" className="hover:text-primary transition-colors">Inicio</a>
-                    <a href="#products" className="hover:text-primary transition-colors">Productos</a>
-                    <a href="#quote" className="hover:text-primary transition-colors">Cotizar</a>
+                <div className="hidden md:flex space-x-10 font-medium">
+                    <a href="#hero" className="text-gray-300 hover:text-white hover:border-b-2 hover:border-electric pb-1 transition-all">Inicio</a>
+                    <a href="#products" className="text-gray-300 hover:text-white hover:border-b-2 hover:border-electric pb-1 transition-all">Productos</a>
+                    <a href="#quote" className="px-5 py-2 rounded-md bg-white/10 text-white hover:bg-energy hover:text-white transition-all duration-300">Cotizar</a>
                 </div>
 
                 {/* Mobile Menu Button */}
                 <button
-                    className="md:hidden text-primary"
+                    className="md:hidden text-white hover:text-electric transition-colors"
                     onClick={() => setIsOpen(!isOpen)}
                 >
-                    {isOpen ? <X size={24} className={scrolled ? 'text-gray-800' : 'text-white'} /> : <Menu size={24} className={scrolled ? 'text-gray-800' : 'text-white'} />}
+                    {isOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
             </div>
 
@@ -44,11 +44,13 @@ const Navbar = () => {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute top-full left-0 w-full bg-white shadow-lg md:hidden p-4 flex flex-col space-y-4"
+                    className="absolute top-full left-0 w-full bg-secondary shadow-xl md:hidden border-t border-white/10"
                 >
-                    <a href="#hero" className="text-gray-800 font-medium hover:text-primary px-4 py-2" onClick={() => setIsOpen(false)}>Inicio</a>
-                    <a href="#products" className="text-gray-800 font-medium hover:text-primary px-4 py-2" onClick={() => setIsOpen(false)}>Productos</a>
-                    <a href="#quote" className="text-gray-800 font-medium hover:text-primary px-4 py-2" onClick={() => setIsOpen(false)}>Cotizar</a>
+                    <div className="flex flex-col p-4 space-y-2">
+                        <a href="#hero" className="text-gray-300 hover:text-white hover:bg-white/5 px-4 py-3 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>Inicio</a>
+                        <a href="#products" className="text-gray-300 hover:text-white hover:bg-white/5 px-4 py-3 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>Productos</a>
+                        <a href="#quote" className="text-energy font-bold hover:bg-white/5 px-4 py-3 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>Cotizar</a>
+                    </div>
                 </motion.div>
             )}
         </nav>

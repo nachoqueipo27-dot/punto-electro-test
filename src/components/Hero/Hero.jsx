@@ -14,7 +14,6 @@ const Hero = () => {
 
     const smoothProgress = useSpring(scrollYProgress, { stiffness: 40, damping: 20 });
 
-    // Update active section logic
     useMotionValueEvent(scrollY, "change", (latest) => {
         const height = window.innerHeight;
         if (latest < height * 0.9) {
@@ -27,12 +26,9 @@ const Hero = () => {
     });
 
     // --- Parallax & Animations ---
+    const circleBlueY = useTransform(smoothProgress, [0, 1], [0, 400]);
+    const circleMintY = useTransform(smoothProgress, [0, 1], [0, -400]);
 
-    // Enhanced Background Movement - Dramatic movements
-    const circleBlueY = useTransform(smoothProgress, [0, 1], [0, 500]);
-    const circleMintY = useTransform(smoothProgress, [0, 1], [0, -500]);
-
-    // Tools Animation Helper with stronger scale and rotation
     const useToolAnimation = (initial, final, rotation) => {
         const x = useTransform(smoothProgress, [0, 1], [initial.x, final.x]);
         const y = useTransform(smoothProgress, [0, 1], [initial.y, final.y]);
@@ -41,16 +37,16 @@ const Hero = () => {
         return { x, y, rotate, scale };
     };
 
-    // Configuration for Tools - High Visibility & Commercial Look
+    // Tools Configuration - High Visibility on Dark Background, alternating White, Electric, Accent
     const tools = [
-        { Icon: Wrench, color: "text-primary", opacity: "opacity-90", init: { x: -160, y: -120 }, final: { x: -650, y: -450 }, rot: -140 },
-        { Icon: Plug, color: "text-[#4a5568]", opacity: "opacity-80", init: { x: 160, y: -140 }, final: { x: 650, y: -400 }, rot: 200 },
+        { Icon: Wrench, color: "text-white", opacity: "opacity-100", init: { x: -160, y: -120 }, final: { x: -650, y: -450 }, rot: -140 },
+        { Icon: Plug, color: "text-electric", opacity: "opacity-90", init: { x: 160, y: -140 }, final: { x: 650, y: -400 }, rot: 200 },
         { Icon: Cable, color: "text-accent", opacity: "opacity-95", init: { x: -120, y: 160 }, final: { x: -550, y: 550 }, rot: 260 },
-        { Icon: Link2, color: "text-primary", opacity: "opacity-85", init: { x: 140, y: 200 }, final: { x: 500, y: 500 }, rot: -200 },
-        { Icon: Hammer, color: "text-[#718096]", opacity: "opacity-75", init: { x: -280, y: 20 }, final: { x: -750, y: 150 }, rot: 380 },
-        { Icon: Lightbulb, color: "text-accent", opacity: "opacity-100", init: { x: 280, y: 60 }, final: { x: 750, y: 250 }, rot: -110 },
-        { Icon: Box, color: "text-primary", opacity: "opacity-80", init: { x: 0, y: -220 }, final: { x: 0, y: -650 }, rot: 110 },
-        { Icon: Zap, color: "text-[#2d3748]", opacity: "opacity-85", init: { x: 0, y: 280 }, final: { x: 0, y: 650 }, rot: -290 },
+        { Icon: Link2, color: "text-white", opacity: "opacity-90", init: { x: 140, y: 200 }, final: { x: 500, y: 500 }, rot: -200 },
+        { Icon: Hammer, color: "text-gray-400", opacity: "opacity-75", init: { x: -280, y: 20 }, final: { x: -750, y: 150 }, rot: 380 },
+        { Icon: Lightbulb, color: "text-electric", opacity: "opacity-100", init: { x: 280, y: 60 }, final: { x: 750, y: 250 }, rot: -110 },
+        { Icon: Box, color: "text-accent", opacity: "opacity-80", init: { x: 0, y: -220 }, final: { x: 0, y: -650 }, rot: 110 },
+        { Icon: Zap, color: "text-white", opacity: "opacity-85", init: { x: 0, y: 280 }, final: { x: 0, y: 650 }, rot: -290 },
     ];
 
     const titles = [
@@ -61,38 +57,26 @@ const Hero = () => {
 
     return (
         <React.Fragment>
-            <section ref={containerRef} id="hero" className="relative h-[300vh] bg-warmGray-100 overflow-hidden">
+            <section ref={containerRef} id="hero" className="relative h-[300vh] bg-secondary overflow-hidden">
                 <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center">
 
-                    {/* --- 1. Commercial Background Layering --- */}
+                    {/* --- 1. Dark Commercial Background --- */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#2D3E50] via-[#1A2847] to-[#0F1922]" />
 
-                    {/* Base Gradient - Warm & Subtle */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-warmGray-50 via-warmGray-100 to-warmGray-150 pointer-events-none" />
+                    {/* Subtle Pattern */}
+                    <div className="absolute inset-0 bg-[linear-gradient(45deg,#36558F_1px,transparent_1px)] [background-size:50px_50px] opacity-[0.08] pointer-events-none" />
 
-                    {/* Subtle Texture - Diagonal Lines */}
-                    <div className="absolute inset-0 bg-[radial-gradient(#36558F_0.5px,transparent_0.8px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none" />
-
-                    {/* Dramatic Blurred Orbs - VISIBLE & VIBRANT */}
+                    {/* Dynamic Lighting Effects - Electric & Energy */}
                     <motion.div
                         style={{ y: circleBlueY }}
-                        className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-primary/30 rounded-full blur-[100px] pointer-events-none mix-blend-multiply opacity-60"
+                        className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] bg-electric rounded-full blur-[150px] pointer-events-none opacity-20 mix-blend-screen"
                     />
                     <motion.div
                         style={{ y: circleMintY }}
-                        className="absolute bottom-[-10%] right-[-10%] w-[900px] h-[900px] bg-accent/40 rounded-full blur-[100px] pointer-events-none mix-blend-multiply opacity-70"
+                        className="absolute bottom-[-20%] right-[5%] w-[700px] h-[700px] bg-energy rounded-full blur-[150px] pointer-events-none opacity-15 mix-blend-screen"
                     />
 
-                    {/* Decorative Geometric Elements */}
-                    <div className="absolute left-[10%] top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
-                    <div className="absolute right-[10%] top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
-
-                    <motion.div
-                        animate={{ y: [0, -30, 0], opacity: [0.2, 0.5, 0.2] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute top-[20%] right-[15%] w-3 h-3 rounded-full bg-primary/20 pointer-events-none"
-                    />
-
-                    {/* --- 2. Floating Tools with Commercial Depth --- */}
+                    {/* --- 2. Floating Tools with Glow --- */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                         {tools.map((item, index) => {
                             const anim = useToolAnimation(item.init, item.final, item.rot);
@@ -100,7 +84,7 @@ const Hero = () => {
                                 <motion.div
                                     key={index}
                                     style={anim}
-                                    className={`absolute ${item.color} ${item.opacity} filter drop-shadow-[0_15px_25px_rgba(54,85,143,0.15)]`}
+                                    className={`absolute ${item.color} ${item.opacity} filter drop-shadow-[0_0_20px_rgba(0,212,255,0.2)]`}
                                 >
                                     <item.Icon
                                         strokeWidth={1.5}
@@ -111,7 +95,7 @@ const Hero = () => {
                         })}
                     </div>
 
-                    {/* --- 3. Typography & Messaging (High Contrast) --- */}
+                    {/* --- 3. Typography & Messaging (White on Dark) --- */}
                     <div className="relative z-30 w-full max-w-7xl mx-auto px-6 text-center">
                         <div className="h-[280px] md:h-[380px] relative flex items-center justify-center">
                             <AnimatePresence mode="wait">
@@ -135,10 +119,10 @@ const Hero = () => {
                                             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                                             className="absolute w-full flex flex-col items-center"
                                         >
-                                            <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold text-primary tracking-tight leading-[0.9] drop-shadow-[0_4px_10px_rgba(54,85,143,0.1)] mb-6">
+                                            <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9] drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] mb-6">
                                                 {t.main}
                                             </h1>
-                                            <h2 className="text-3xl md:text-5xl font-light text-primary/80 tracking-wide drop-shadow-sm">
+                                            <h2 className="text-3xl md:text-5xl font-light text-white/70 tracking-wide drop-shadow-md">
                                                 {t.sub}
                                             </h2>
                                         </motion.div>
@@ -147,7 +131,7 @@ const Hero = () => {
                             </AnimatePresence>
                         </div>
 
-                        {/* CTA Section */}
+                        {/* Energetic CTA Section */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -156,25 +140,26 @@ const Hero = () => {
                         >
                             <a
                                 href="#quote"
-                                className="group relative bg-[#36558F] text-white text-lg md:text-xl font-medium px-14 py-6 shadow-[0_20px_50px_-12px_rgba(54,85,143,0.4)] hover:shadow-[0_30px_60px_-12px_rgba(54,85,143,0.6)] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden rounded-sm"
+                                className="group relative bg-energy hover:bg-[#FF5520] text-white text-lg md:text-xl font-bold px-16 py-6 shadow-[0_20px_50px_-12px_rgba(255,107,53,0.5)] hover:shadow-[0_30px_70px_-12px_rgba(255,107,53,0.7)] transition-all duration-300 transform hover:-translate-y-2 overflow-hidden rounded-lg"
                             >
-                                <span className="relative z-10 tracking-wide">SOLICITAR COTIZACIÓN</span>
-                                <div className="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                                <span className="relative z-10 tracking-widest uppercase">Solicitar Cotización</span>
+                                {/* Shine Effect */}
+                                <div className="absolute top-0 -left-[100%] w-[100%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 group-hover:left-[100%] transition-all duration-700 ease-in-out"></div>
                             </a>
                         </motion.div>
                     </div>
 
-                    {/* --- 4. Premium Scroll Indicator --- */}
+                    {/* --- 4. Electric Scroll Indicator --- */}
                     <motion.div
                         animate={{ opacity: activeSection === 2 ? 0 : 1 }}
                         className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-5 z-20"
                     >
-                        <span className="text-primary/50 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase">Scroll</span>
-                        <div className="w-[1px] h-20 bg-gradient-to-b from-primary/5 via-primary/30 to-primary/5 overflow-hidden">
+                        <span className="text-electric text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase glow-text">Explorar</span>
+                        <div className="w-[2px] h-20 bg-gradient-to-b from-electric/10 via-electric/40 to-electric/5 overflow-hidden">
                             <motion.div
                                 animate={{ y: [-80, 80] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                className="w-full h-1/2 bg-primary"
+                                transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+                                className="w-full h-1/2 bg-electric shadow-[0_0_10px_#00D4FF]"
                             />
                         </div>
                     </motion.div>
@@ -183,9 +168,12 @@ const Hero = () => {
             </section>
 
             {/* 5. Seamless Transition Section */}
-            <section className="py-24 bg-warmGray-100 flex flex-col items-center justify-center relative z-10 border-t border-primary/5">
-                <div className="text-center opacity-60 hover:opacity-90 transition-opacity duration-500">
-                    <p className="text-primary text-2xl font-light tracking-wide italic font-serif">"Calidad que energiza tus proyectos"</p>
+            <section className="py-24 bg-light flex flex-col items-center justify-center relative z-10 border-t border-secondary/10">
+                <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-lg mb-6 text-primary">
+                        <ArrowDown size={32} />
+                    </div>
+                    <p className="text-primary text-2xl font-light tracking-wide italic font-serif opacity-80">"Energía experta para proyectos exigentes"</p>
                 </div>
             </section>
         </React.Fragment>
