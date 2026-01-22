@@ -1,132 +1,171 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Wrench, Hammer, Plug, Lightbulb, Box, Zap, Construction } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from 'framer-motion';
+import { Wrench, Plug, Cable, Link2, Hammer, Lightbulb, Box, Settings, ArrowDown } from 'lucide-react';
 
 const Hero = () => {
     const containerRef = useRef(null);
+    // Track the active section for text changes
+    const [activeSection, setActiveSection] = useState(0);
+
+    const { scrollY } = useScroll();
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
     });
 
-    const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20 });
 
-    // Background Transition
-    const bgOpacity1 = useTransform(smoothProgress, [0, 0.4], [1, 0]);
-    const bgOpacity2 = useTransform(smoothProgress, [0.2, 0.6], [0, 1]);
+    // Update active section based on scroll position
+    // We assume the hero is roughly 3 screens tall (300vh), so we divide into 3 sections
+    useMotionValueEvent(scrollY, "change", (latest) => {
+        const height = window.innerHeight;
+        if (latest < height * 0.8) {
+            setActiveSection(0);
+        } else if (latest < height * 1.6) {
+            setActiveSection(1);
+        } else {
+            setActiveSection(2);
+        }
+    });
 
-    // Titles Animation
-    const title1Opacity = useTransform(smoothProgress, [0, 0.2, 0.3], [1, 1, 0]);
-    const title1Y = useTransform(smoothProgress, [0, 0.3], [0, -100]);
-    const title1Scale = useTransform(smoothProgress, [0, 0.3], [1, 0.8]);
+    // --- Parallax & Animations ---
 
-    const title2Opacity = useTransform(smoothProgress, [0.25, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
-    const title2Y = useTransform(smoothProgress, [0.3, 0.5, 0.7], [100, 0, -100]);
+    // Background Circles Movement
+    const circleY = useTransform(smoothProgress, [0, 1], [0, -300]);
+    const circleRotate = useTransform(smoothProgress, [0, 1], [0, 90]);
 
-    const title3Opacity = useTransform(smoothProgress, [0.65, 0.8, 1], [0, 1, 1]);
-    const title3Y = useTransform(smoothProgress, [0.7, 1], [100, 0]);
-
-    // Tool Animations
-    const toolboxScale = useTransform(smoothProgress, [0, 0.2], [1, 1.2]);
-    const toolboxRotate = useTransform(smoothProgress, [0, 1], [0, 15]);
-    const toolboxY = useTransform(smoothProgress, [0, 1], [0, 200]);
-
-    // Flying Tools Logic
-    // Start at center (0,0), then fly out based on scroll
-    const flyProgress = useTransform(smoothProgress, [0.1, 1], [0, 1]); // 0 to 1 as we scroll
-
-    // Helper to create transforms
-    const useToolTransform = (xEnd, yEnd, rotEnd, delay = 0) => {
-        const x = useTransform(flyProgress, [0 + delay, 1], [0, xEnd]);
-        const y = useTransform(flyProgress, [0 + delay, 1], [0, yEnd]);
-        const r = useTransform(flyProgress, [0 + delay, 1], [0, rotEnd]);
-        const o = useTransform(flyProgress, [0, 0.1 + delay], [0, 1]);
-        return { x, y, rotate: r, opacity: o };
+    // Tools Animation
+    // We'll create a helper to generate transforms for each tool
+    // They spread out and rotate as we scroll
+    const useToolAnimation = (initialPos, finalPos, rotationRange) => {
+        const x = useTransform(smoothProgress, [0, 1], [initialPos.x, finalPos.x]);
+        const y = useTransform(smoothProgress, [0, 1], [initialPos.y, finalPos.y]);
+        const rotate = useTransform(smoothProgress, [0, 1], [0, rotationRange]);
+        return { x, y, rotate };
     };
 
-    const t1 = useToolTransform(-400, -300, -45, 0);   // Top Left - Wrench
-    const t2 = useToolTransform(450, -250, 90, 0.05);  // Top Right - Hammer
-    const t3 = useToolTransform(-350, 200, -120, 0.1); // Bottom Left - Plug
-    const t4 = useToolTransform(400, 150, 45, 0.15);   // Bottom Right - Lightbulb
-    const t5 = useToolTransform(0, -400, 0, 0.2);      // Top Center - Zap
-    const t6 = useToolTransform(0, 350, 180, 0.25);    // Bottom Center - Construction
+    // Tool Configurations
+    // Initial positions are somewhat centered/clumped, final are dispersed
+    const tools = [
+        { Icon: Wrench, color: "text-primary", init: { x: -100, y: -50 }, final: { x: -400, y: -200 }, rot: -45 },
+        { Icon: Plug, color: "text-gray-400", init: { x: 100, y: -80 }, final: { x: 450, y: -300 }, rot: 90 },
+        { Icon: Cable, color: "text-[#C5E0D8]", init: { x: -50, y: 100 }, final: { x: -350, y: 300 }, rot: 120 },
+        { Icon: Link2, color: "text-primary", init: { x: 80, y: 120 }, final: { x: 300, y: 250 }, rot: -90 },
+        { Icon: Hammer, color: "text-gray-300", init: { x: -150, y: 0 }, final: { x: -500, y: 50 }, rot: 180 },
+        { Icon: Lightbulb, color: "text-[#C5E0D8]", init: { x: 180, y: 20 }, final: { x: 550, y: 100 }, rot: -60 },
+        { Icon: Box, color: "text-primary", init: { x: 0, y: -150 }, final: { x: 0, y: -450 }, rot: 45 },
+        { Icon: Settings, color: "text-gray-400", init: { x: 0, y: 180 }, final: { x: 0, y: 400 }, rot: -135 },
+    ];
+
+    // Titles Configuration
+    const titles = [
+        { main: "Soluciones Eléctricas", sub: "Profesionales y Confiables" },
+        { main: "Materiales de", sub: "Calidad Premium" },
+        { main: "Servicio Técnico", sub: "Especializado" },
+    ];
 
     return (
-        <section ref={containerRef} id="hero" className="relative h-[300vh]">
-            <div className="sticky top-0 w-full h-screen overflow-hidden">
+        <React.Fragment>
+            <section ref={containerRef} id="hero" className="relative h-[300vh]">
+                <div className="sticky top-0 w-full h-screen overflow-hidden bg-white">
 
-                {/* Background Layer 1: Deep Blue (Start) */}
-                <motion.div style={{ opacity: bgOpacity1 }} className="absolute inset-0 bg-gradient-to-br from-primary via-[#2a4475] to-secondary flex items-center justify-center">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                </motion.div>
+                    {/* 1. Background Effects */}
+                    {/* Gradient Mesh */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white via-[#F5F9FA] to-[#E6F0EE] opacity-80" />
 
-                {/* Background Layer 2: White/Mint (End) */}
-                <motion.div style={{ opacity: bgOpacity2 }} className="absolute inset-0 bg-gradient-to-br from-secondary via-white to-accent/30 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-                </motion.div>
+                    {/* Floating Blurs - Parallax */}
+                    <motion.div
+                        style={{ y: circleY, rotate: circleRotate }}
+                        className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#36558F] rounded-full blur-[120px] opacity-[0.05] pointer-events-none"
+                    />
+                    <motion.div
+                        style={{ y: useTransform(circleY, v => v * -0.5), rotate: useTransform(circleRotate, v => v * -1) }}
+                        className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[#C5E0D8] rounded-full blur-[100px] opacity-[0.3] pointer-events-none"
+                    />
 
-                {/* Content Container */}
-                <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
-
-                    {/* Titles Container - Absolute Positioned to Center */}
-                    <div className="absolute top-[20%] w-full max-w-6xl text-center pointer-events-none z-30">
-                        <motion.h1 style={{ opacity: title1Opacity, y: title1Y, scale: title1Scale }} className="text-6xl md:text-8xl lg:text-9xl font-bold text-white leading-tight drop-shadow-xl">
-                            Soluciones Eléctricas <span className="text-accent block text-5xl md:text-7xl mt-4">Profesionales</span>
-                        </motion.h1>
-
-                        <motion.h1 style={{ opacity: title2Opacity, y: title2Y }} className="absolute top-0 w-full text-6xl md:text-8xl lg:text-9xl font-bold text-primary leading-tight">
-                            Materiales de <span className="text-[#4b6cb7] block text-5xl md:text-7xl mt-4">Calidad Premium</span>
-                        </motion.h1>
-
-                        <motion.h1 style={{ opacity: title3Opacity, y: title3Y }} className="absolute top-0 w-full text-6xl md:text-8xl lg:text-9xl font-bold text-primary leading-tight">
-                            Servicio Técnico <span className="text-[#36558F] block text-5xl md:text-7xl mt-4">Especializado</span>
-                        </motion.h1>
+                    {/* 2. Floating Tools */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                        {tools.map((item, index) => {
+                            const anim = useToolAnimation(item.init, item.final, item.rot);
+                            return (
+                                <motion.div
+                                    key={index}
+                                    style={{ x: anim.x, y: anim.y, rotate: anim.rotate }}
+                                    className={`absolute ${item.color} opacity-40 [&>svg]:w-16 [&>svg]:h-16 md:[&>svg]:w-24 md:[&>svg]:h-24`}
+                                >
+                                    <item.Icon strokeWidth={1.5} />
+                                </motion.div>
+                            );
+                        })}
                     </div>
 
-                    {/* Toolbox / 3D Element Simulation */}
-                    <div className="relative mt-32 md:mt-48 pointer-events-none">
-                        {/* Flying Tools */}
-                        <motion.div style={t1} className="absolute inset-0 flex items-center justify-center"><Wrench size={80} className="text-gray-300 fill-gray-400 drop-shadow-2xl" /></motion.div>
-                        <motion.div style={t2} className="absolute inset-0 flex items-center justify-center"><Hammer size={100} className="text-gray-400 fill-gray-500 drop-shadow-2xl" /></motion.div>
-                        <motion.div style={t3} className="absolute inset-0 flex items-center justify-center"><Plug size={90} className="text-accent fill-white stroke-primary drop-shadow-2xl" /></motion.div>
-                        <motion.div style={t4} className="absolute inset-0 flex items-center justify-center"><Lightbulb size={90} className="text-yellow-400 fill-yellow-100 drop-shadow-2xl" /></motion.div>
-                        <motion.div style={t5} className="absolute inset-0 flex items-center justify-center"><Zap size={120} className="text-blue-300 fill-blue-100 drop-shadow-2xl" /></motion.div>
-                        <motion.div style={t6} className="absolute inset-0 flex items-center justify-center"><Construction size={80} className="text-orange-400 fill-orange-100 drop-shadow-2xl" /></motion.div>
+                    {/* 3. Main Content - Dynamic Titles */}
+                    <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4">
+                        <div className="h-[200px] md:h-[250px] flex items-center justify-center relative w-full">
+                            {titles.map((t, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+                                    animate={{
+                                        opacity: activeSection === index ? 1 : 0,
+                                        y: activeSection === index ? 0 : -20,
+                                        filter: activeSection === index ? "blur(0px)" : "blur(10px)"
+                                    }}
+                                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                                    className="absolute w-full"
+                                >
+                                    <h1 className="text-6xl md:text-9xl font-bold text-primary tracking-tight mb-4">
+                                        {t.main}
+                                    </h1>
+                                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-primary/60">
+                                        {t.sub}
+                                    </h2>
+                                </motion.div>
+                            ))}
+                        </div>
 
-                        {/* Central Toolbox */}
+                        {/* CTA Button */}
                         <motion.div
-                            style={{
-                                scale: toolboxScale,
-                                rotateX: 20,
-                                rotateY: toolboxRotate,
-                                y: toolboxY
-                            }}
-                            className="relative z-20 w-64 h-64 md:w-96 md:h-96 bg-gradient-to-b from-[#2a4475] to-[#1e3a8a] rounded-3xl shadow-[0_50px_100px_-12px_rgba(0,0,0,0.5)] flex items-center justify-center border-t border-white/20"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5, duration: 0.8 }}
+                            className="mt-16"
                         >
-                            <Box size={140} className="text-white/80" />
-
-                            {/* Decorative Elements on Box */}
-                            <div className="absolute top-0 left-0 w-full h-full bg-white/5 rounded-3xl backdrop-blur-[2px]"></div>
+                            <a
+                                href="#quote"
+                                className="inline-block bg-primary text-white text-lg font-medium px-10 py-5 shadow-xl hover:shadow-2xl hover:bg-black/80 transition-all transform hover:-translate-y-1"
+                            >
+                                Solicitar Cotización
+                            </a>
                         </motion.div>
                     </div>
 
-                </div>
+                    {/* 4. Scroll Indicator */}
+                    <motion.div
+                        animate={{ opacity: activeSection === 2 ? 0 : 1 }}
+                        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20"
+                    >
+                        <span className="text-primary/40 text-sm font-medium tracking-wide">Desplázate para explorar</span>
+                        <div className="w-[1px] h-12 bg-gradient-to-b from-primary/0 via-primary/30 to-primary/0">
+                            <motion.div
+                                animate={{ y: [0, 48, 0] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                className="w-full h-1/3 bg-primary"
+                            />
+                        </div>
+                    </motion.div>
 
-                {/* Scroll Indicator */}
-                <motion.div
-                    style={{ opacity: useTransform(smoothProgress, [0, 0.1], [1, 0]) }}
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/70"
-                >
-                    <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center p-2">
-                        <motion.div
-                            animate={{ y: [0, 12, 0] }}
-                            transition={{ repeat: Infinity, duration: 1.5 }}
-                            className="w-1 h-2 bg-white rounded-full"
-                        />
-                    </div>
-                </motion.div>
-            </div>
-        </section>
+                </div>
+            </section>
+
+            {/* 5. Extended Scroll Section */}
+            <section className="h-96 bg-gradient-to-b from-white to-[#F5F9FA] flex items-center justify-center">
+                <div className="text-center opacity-40">
+                    <ArrowDown className="mx-auto mb-4 text-primary" size={32} />
+                    <p className="text-primary text-xl font-light">Continúa explorando nuestros servicios</p>
+                </div>
+            </section>
+        </React.Fragment>
     );
 };
 
