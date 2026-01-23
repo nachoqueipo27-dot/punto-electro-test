@@ -40,29 +40,26 @@ const Counter = ({ value, label, icon: Icon }) => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex flex-col items-center text-center p-6 rounded-2xl hover:bg-white/5 transition-colors duration-300"
+            className="flex flex-col items-center text-center p-6 rounded-lg hover:bg-light transition-colors duration-300"
         >
-            <div className="p-4 bg-primary/30 rounded-full mb-4 text-electric shadow-[0_0_15px_rgba(0,212,255,0.3)]">
-                <Icon size={32} />
+            <div className="p-4 bg-white border border-border rounded-full mb-4 text-primary shadow-sm">
+                <Icon size={28} strokeWidth={1.5} />
             </div>
-            <h3 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-electric to-white mb-2 font-mono">
+            <h3 className="text-4xl font-bold text-dark mb-2 font-sans tracking-tight">
                 {prefix}<span ref={nodeRef}>0</span>{suffix}
             </h3>
-            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">{label}</p>
+            <p className="text-secondary/80 font-medium text-sm">{label}</p>
         </motion.div>
     );
 };
 
 const TrustSection = () => {
     return (
-        <section className="py-24 bg-darkBg text-white relative overflow-hidden">
-            {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-darkBg via-[#1A2847] to-darkBg pointer-events-none" />
-
-            <div className="container mx-auto px-6 relative z-10">
+        <section className="py-24 bg-white border-y border-border">
+            <div className="container mx-auto px-6 lg:px-8">
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 border-b border-white/5 pb-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 border-b border-border pb-16">
                     {stats.map((stat) => (
                         <Counter key={stat.id} {...stat} />
                     ))}
@@ -70,8 +67,8 @@ const TrustSection = () => {
 
                 {/* Testimonials */}
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold mb-4">Confianza que Construye</h2>
-                    <p className="text-gray-400 max-w-2xl mx-auto">Excelencia respaldada por quienes lideran la industria.</p>
+                    <h2 className="text-3xl font-bold mb-4 text-dark">Confianza que Construye</h2>
+                    <p className="text-secondary/70 max-w-2xl mx-auto">Excelencia respaldada por quienes lideran la industria.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -81,19 +78,19 @@ const TrustSection = () => {
                             initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="bg-[#1A2847] p-8 rounded-xl border border-white/5 relative group hover:border-electric/30 transition-all duration-300"
+                            className="bg-light p-8 rounded-lg border border-border relative hover:border-accent/40 transition-all duration-300"
                         >
-                            <div className="flex gap-1 text-energy mb-4">
-                                {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                            <div className="flex gap-1 text-[#F59E0B] mb-4">  {/* Standard Yellow/Orange for stars */}
+                                {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" strokeWidth={0} />)}
                             </div>
-                            <p className="text-gray-300 mb-6 italic leading-relaxed">"{t.text}"</p>
+                            <p className="text-secondary mb-6 italic leading-relaxed text-sm">"{t.text}"</p>
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 flex items-center justify-center font-bold text-xs text-electric">
+                                <div className="w-10 h-10 rounded-full bg-dark text-white flex items-center justify-center font-bold text-xs">
                                     {t.name.substring(0, 2).toUpperCase()}
                                 </div>
                                 <div className="text-left">
-                                    <h4 className="font-bold text-white text-sm">{t.name}</h4>
-                                    <p className="text-xs text-gray-500">{t.role}</p>
+                                    <h4 className="font-bold text-dark text-sm">{t.name}</h4>
+                                    <p className="text-xs text-secondary/60">{t.role}</p>
                                 </div>
                             </div>
                         </motion.div>

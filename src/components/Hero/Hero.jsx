@@ -24,7 +24,8 @@ const Hero = () => {
     const opacity3 = useTransform(smoothProgress, [0.65, 0.75, 1], [0, 1, 1]);
     const scale3 = useTransform(smoothProgress, [0.65, 1], [0.9, 1]);
 
-    // --- Dynamic Backgrounds ---
+    // --- Dynamic Backgrounds (Professional Gradients) ---
+    // Gradients updated to corporate professional tones
     const bgGradient1 = useTransform(smoothProgress, [0, 0.3], [1, 0]);
     const bgGradient2 = useTransform(smoothProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
     const bgGradient3 = useTransform(smoothProgress, [0.7, 1], [0, 1]);
@@ -44,30 +45,33 @@ const Hero = () => {
 
     const tools = [
         { Icon: Wrench, color: "text-white", style: { top: "20%", left: "15%", x: t1_x, y: t1_y } },
-        { Icon: Zap, color: "text-energy", style: { top: "15%", right: "20%", x: useTransform(smoothProgress, [0, 1], [0, 100]), rotate: t2_rot } },
-        { Icon: Plug, color: "text-electric", style: { bottom: "30%", left: "20%", y: t3_y } },
+        { Icon: Zap, color: "text-cta", style: { top: "15%", right: "20%", x: useTransform(smoothProgress, [0, 1], [0, 100]), rotate: t2_rot } },
+        { Icon: Plug, color: "text-accent", style: { bottom: "30%", left: "20%", y: t3_y } },
         { Icon: Activity, color: "text-white", style: { bottom: "25%", right: "25%", x: t2_x, y: t2_y } },
         { Icon: Cable, color: "text-accent", style: { top: "40%", left: "50%", scale: useTransform(smoothProgress, [0, 0.5, 1], [1, 1.5, 0.5]) } },
     ];
 
     return (
         <section ref={containerRef} className="relative h-[300vh]">
-            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-[#0F1922]">
+            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-primary">
 
-                {/* --- 1. Dynamic Backgrounds Layers --- */}
-                <motion.div style={{ opacity: bgGradient1 }} className="absolute inset-0 bg-gradient-to-br from-[#2D3E50] via-[#1A2847] to-[#0F1922] z-0" />
-                <motion.div style={{ opacity: bgGradient2 }} className="absolute inset-0 bg-gradient-to-bl from-[#1A2847] via-[#0F1922] to-[#004a5c] z-0" />
-                <motion.div style={{ opacity: bgGradient3 }} className="absolute inset-0 bg-gradient-to-tr from-[#2a120a] via-[#1A2847] to-[#0F1922] z-0" />
+                {/* --- 1. Dynamic Backgrounds Layers (Professional) --- */}
+                {/* Layer 1: Primary Corporate Blue */}
+                <motion.div style={{ opacity: bgGradient1 }} className="absolute inset-0 bg-gradient-to-br from-primary via-[#002a40] to-[#001824] z-0" />
+                {/* Layer 2: Secondary Gray-Blue Tint */}
+                <motion.div style={{ opacity: bgGradient2 }} className="absolute inset-0 bg-gradient-to-bl from-secondary via-primary to-secondary z-0" />
+                {/* Layer 3: Dark Corporate Tint */}
+                <motion.div style={{ opacity: bgGradient3 }} className="absolute inset-0 bg-gradient-to-t from-dark via-primary to-primary z-0" />
 
-                {/* Shared Background Pattern */}
-                <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none z-0" />
+                {/* Shared Background Pattern (Subtle grid) */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none z-0" />
 
                 {/* --- 2. Floating Tools (Consistent across scroll but moving) --- */}
                 <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
                     {tools.map((t, i) => (
                         <motion.div
                             key={i}
-                            className={`absolute ${t.color} opacity-30 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]`}
+                            className={`absolute ${t.color} opacity-20`}
                             style={t.style}
                         >
                             <t.Icon size={100} strokeWidth={1} />
@@ -82,14 +86,14 @@ const Hero = () => {
                     style={{ opacity: opacity1, scale: scale1 }}
                     className="absolute z-20 text-center px-4 max-w-5xl"
                 >
-                    <div className="inline-block px-4 py-1 rounded-full border border-electric/30 bg-electric/10 text-electric font-mono text-sm mb-6 tracking-widest uppercase">
+                    <div className="inline-block px-4 py-1 rounded bg-white/10 text-white font-medium text-sm mb-6 tracking-wide uppercase border border-white/10">
                         Ingeniería y Distribución
                     </div>
-                    <h1 className="text-7xl md:text-9xl font-bold text-white tracking-tight leading-none mb-6 drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                    <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-6">
                         SOLUCIONES<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric to-white">ELÉCTRICAS</span>
+                        <span className="text-accent">ELÉCTRICAS</span>
                     </h1>
-                    <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">
+                    <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto font-light">
                         Potencia, seguridad y eficiencia para proyectos industriales de alto nivel.
                     </p>
                 </motion.div>
@@ -99,14 +103,14 @@ const Hero = () => {
                     style={{ opacity: opacity2, y: y2 }}
                     className="absolute z-20 text-center px-4 max-w-5xl"
                 >
-                    <div className="inline-block px-4 py-1 rounded-full border border-accent/30 bg-accent/10 text-accent font-mono text-sm mb-6 tracking-widest uppercase">
+                    <div className="inline-block px-4 py-1 rounded bg-white/10 text-white font-medium text-sm mb-6 tracking-wide uppercase border border-white/10">
                         Catálogo Certificado
                     </div>
-                    <h2 className="text-7xl md:text-9xl font-bold text-white tracking-tight leading-none mb-6">
+                    <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-6">
                         MATERIALES<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-white">PREMIUM</span>
+                        <span className="text-white/90">PREMIUM</span>
                     </h2>
-                    <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">
+                    <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto font-light">
                         Stock permanente de las marcas líderes mundiales.
                     </p>
                 </motion.div>
@@ -116,18 +120,18 @@ const Hero = () => {
                     style={{ opacity: opacity3, scale: scale3 }}
                     className="absolute z-20 text-center px-4 max-w-5xl"
                 >
-                    <div className="inline-block px-4 py-1 rounded-full border border-energy/30 bg-energy/10 text-energy font-mono text-sm mb-6 tracking-widest uppercase">
+                    <div className="inline-block px-4 py-1 rounded bg-white/10 text-white font-medium text-sm mb-6 tracking-wide uppercase border border-white/10">
                         Soporte Experto 24/7
                     </div>
-                    <h2 className="text-7xl md:text-9xl font-bold text-white tracking-tight leading-none mb-6">
+                    <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-6">
                         SERVICIO<br />
-                        DISEÑADO PARA <span className="text-energy">TI</span>
+                        DISEÑADO PARA <span className="text-cta">TI</span>
                     </h2>
                     <motion.a
                         href="#quote"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="inline-flex items-center justify-center px-10 py-5 bg-energy text-white font-bold text-xl rounded-full shadow-[0_0_30px_rgba(255,107,53,0.4)] hover:shadow-[0_0_50px_rgba(255,107,53,0.6)] transition-all mt-8"
+                        className="inline-flex items-center justify-center px-10 py-4 bg-cta text-white font-bold text-lg rounded-lg shadow-sm hover:bg-[#c24b1f] transition-all mt-8"
                     >
                         Solicitar Asesoría
                     </motion.a>
@@ -137,9 +141,9 @@ const Hero = () => {
                 {/* --- 4. Progression Indicators --- */}
                 {/* Right Side Dots */}
                 <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-30">
-                    <motion.div style={{ opacity: opacity1 }} className="w-3 h-3 bg-electric rounded-full shadow-[0_0_8px_cyan]" />
-                    <motion.div style={{ opacity: opacity2 }} className="w-3 h-3 bg-accent rounded-full shadow-[0_0_8px_#C5E0D8]" />
-                    <motion.div style={{ opacity: opacity3 }} className="w-3 h-3 bg-energy rounded-full shadow-[0_0_8px_orange]" />
+                    <motion.div style={{ opacity: opacity1 }} className="w-2 h-2 bg-accent rounded-full" />
+                    <motion.div style={{ opacity: opacity2 }} className="w-2 h-2 bg-white rounded-full" />
+                    <motion.div style={{ opacity: opacity3 }} className="w-2 h-2 bg-cta rounded-full" />
                 </div>
 
                 {/* Scroll hint (fades out at end) */}
@@ -148,9 +152,9 @@ const Hero = () => {
                     className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30"
                 >
                     <span className="text-xs uppercase tracking-widest text-white/50">Scroll</span>
-                    <div className="w-[1px] h-12 bg-white/20 overflow-hidden">
+                    <div className="w-[1px] h-10 bg-white/20 overflow-hidden">
                         <motion.div
-                            animate={{ y: [-48, 48] }}
+                            animate={{ y: [-40, 40] }}
                             transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
                             className="w-full h-1/2 bg-white"
                         />

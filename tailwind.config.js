@@ -7,22 +7,19 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#1A2847",      // Azul oscuro profundo
-                secondary: "#2D3E50",    // Gris charcoal
-                accent: "#C5E0D8",       // Menta suave (Brand legacy)
-                electric: "#00D4FF",     // Cian eléctrico (New)
-                energy: "#FF6B35",       // Naranja energético (CTA)
-                light: "#F3F4F7",        // Gris claro comercial (Background)
-                darkBg: "#0F1922",       // Fondo muy oscuro
+                primary: "#003D5C",      // Azul corporativo profundo
+                secondary: "#2C3E50",    // Gris azulado profesional
+                accent: "#0088B4",       // Azul cian refinado
+                cta: "#D85E2C",          // Naranja corporativo
+                light: "#F5F7FA",        // Gris muy claro
+                dark: "#1F2937",         // Gris oscuro para texto
+                darkBg: "#1F2937",       // Fondo oscuro
+                border: "#E5E7EB",       // Gris para bordes
             },
             fontFamily: {
                 sans: ["Inter", "system-ui", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
             },
-            fontSize: {
-                '2xl': '24px',
-                '7xl': '48px',
-                '9xl': '96px',
-            },
+            // Removed AI-style glow shadows
         },
     },
     plugins: [],
