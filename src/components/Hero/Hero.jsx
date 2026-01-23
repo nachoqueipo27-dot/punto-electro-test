@@ -25,26 +25,29 @@ const Hero = () => {
     const scale3 = useTransform(smoothProgress, [0.65, 1], [0.9, 1]);
 
     // --- Dynamic Backgrounds ---
-    // Interpolate colors based on scroll
-    // 0 -> #2D3E50 (Dark)
-    // 0.5 -> #0F1922 (Darker/Blueish)
-    // 1 -> #1A2847 (Deep Blue)
-    // We add overlays for specific tinting per section
-    const bgGradient1 = useTransform(smoothProgress, [0, 0.3], [1, 0]); // Fade out first bg layer
-    const bgGradient2 = useTransform(smoothProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]); // Fade in/out second
-    const bgGradient3 = useTransform(smoothProgress, [0.7, 1], [0, 1]); // Fade in last
+    const bgGradient1 = useTransform(smoothProgress, [0, 0.3], [1, 0]);
+    const bgGradient2 = useTransform(smoothProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
+    const bgGradient3 = useTransform(smoothProgress, [0.7, 1], [0, 1]);
 
-    // --- Tool Animations (Multi-stage) ---
-    // They drift and rotate constantly but shift positions drastically between stages
-    const toolsY = useTransform(smoothProgress, [0, 1], [0, -400]);
-    const toolsRotate = useTransform(smoothProgress, [0, 1], [0, 180]);
+    // --- Tool Animations (Multi-stage with specific positions) ---
+    // State 1: Solutions focus (Scattered)
+    const t1_x = useTransform(smoothProgress, [0, 0.3], [0, -150]);
+    const t1_y = useTransform(smoothProgress, [0, 0.3], [0, -100]);
+
+    // State 2: Products focus (Grid/Organized feel)
+    const t2_x = useTransform(smoothProgress, [0.3, 0.6], [0, 200]);
+    const t2_y = useTransform(smoothProgress, [0.3, 0.6], [0, 50]);
+    const t2_rot = useTransform(smoothProgress, [0.3, 0.6], [0, 90]);
+
+    // State 3: Service focus (Floating up)
+    const t3_y = useTransform(smoothProgress, [0.6, 1], [0, -300]);
 
     const tools = [
-        { Icon: Wrench, color: "text-white", x: "10%", y: "20%" },
-        { Icon: Zap, color: "text-energy", x: "80%", y: "15%" },
-        { Icon: Plug, color: "text-electric", x: "20%", y: "60%" },
-        { Icon: Activity, color: "text-white", x: "70%", y: "70%" },
-        { Icon: Cable, color: "text-accent", x: "40%", y: "40%" },
+        { Icon: Wrench, color: "text-white", style: { top: "20%", left: "15%", x: t1_x, y: t1_y } },
+        { Icon: Zap, color: "text-energy", style: { top: "15%", right: "20%", x: useTransform(smoothProgress, [0, 1], [0, 100]), rotate: t2_rot } },
+        { Icon: Plug, color: "text-electric", style: { bottom: "30%", left: "20%", y: t3_y } },
+        { Icon: Activity, color: "text-white", style: { bottom: "25%", right: "25%", x: t2_x, y: t2_y } },
+        { Icon: Cable, color: "text-accent", style: { top: "40%", left: "50%", scale: useTransform(smoothProgress, [0, 0.5, 1], [1, 1.5, 0.5]) } },
     ];
 
     return (
@@ -52,29 +55,25 @@ const Hero = () => {
             <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-[#0F1922]">
 
                 {/* --- 1. Dynamic Backgrounds Layers --- */}
-                {/* Layer 1: Dark Blue Electric */}
                 <motion.div style={{ opacity: bgGradient1 }} className="absolute inset-0 bg-gradient-to-br from-[#2D3E50] via-[#1A2847] to-[#0F1922] z-0" />
-
-                {/* Layer 2: Mint/Cyan Tint */}
                 <motion.div style={{ opacity: bgGradient2 }} className="absolute inset-0 bg-gradient-to-bl from-[#1A2847] via-[#0F1922] to-[#004a5c] z-0" />
-
-                {/* Layer 3: Energy Orange Tint */}
                 <motion.div style={{ opacity: bgGradient3 }} className="absolute inset-0 bg-gradient-to-tr from-[#2a120a] via-[#1A2847] to-[#0F1922] z-0" />
 
                 {/* Shared Background Pattern */}
                 <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none z-0" />
 
                 {/* --- 2. Floating Tools (Consistent across scroll but moving) --- */}
-                <motion.div
-                    style={{ y: toolsY, rotate: toolsRotate }}
-                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
-                >
+                <div className="absolute inset-0 w-full h-full pointer-events-none z-10">
                     {tools.map((t, i) => (
-                        <div key={i} className={`absolute ${t.color} opacity-20`} style={{ left: t.x, top: t.y }}>
-                            <t.Icon size={120} strokeWidth={1} />
-                        </div>
+                        <motion.div
+                            key={i}
+                            className={`absolute ${t.color} opacity-30 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]`}
+                            style={t.style}
+                        >
+                            <t.Icon size={100} strokeWidth={1} />
+                        </motion.div>
                     ))}
-                </motion.div>
+                </div>
 
                 {/* --- 3. Content Stages --- */}
 

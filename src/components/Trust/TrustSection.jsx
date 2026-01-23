@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, animate } from 'framer-motion';
 import { Star, ShieldCheck, Clock, Users } from 'lucide-react';
 
 const stats = [
@@ -14,6 +14,45 @@ const testimonials = [
     { id: 3, name: "Desarrollos Urbanos", text: "La disponibilidad de stock y logística rápida nos permite mantener el ritmo de obra.", role: "Adquisiciones" },
 ];
 
+// Animated Counter Component
+const Counter = ({ value, label, icon: Icon }) => {
+    // Extract numerical part and suffix
+    const numericPart = parseInt(value.replace(/\D/g, '')) || 0;
+    const suffix = value.includes('k') ? 'k' : value.includes('+') ? '+' : '';
+    const prefix = value.startsWith('+') ? '+' : '';
+
+    const nodeRef = React.useRef();
+
+    React.useEffect(() => {
+        const node = nodeRef.current;
+        const controls = animate(0, numericPart, {
+            duration: 2.5,
+            ease: "circOut",
+            onUpdate(val) {
+                if (node) node.textContent = Math.round(val);
+            }
+        });
+        return () => controls.stop();
+    }, [numericPart]);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center text-center p-6 rounded-2xl hover:bg-white/5 transition-colors duration-300"
+        >
+            <div className="p-4 bg-primary/30 rounded-full mb-4 text-electric shadow-[0_0_15px_rgba(0,212,255,0.3)]">
+                <Icon size={32} />
+            </div>
+            <h3 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-electric to-white mb-2 font-mono">
+                {prefix}<span ref={nodeRef}>0</span>{suffix}
+            </h3>
+            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">{label}</p>
+        </motion.div>
+    );
+};
+
 const TrustSection = () => {
     return (
         <section className="py-24 bg-darkBg text-white relative overflow-hidden">
@@ -24,21 +63,8 @@ const TrustSection = () => {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 border-b border-white/5 pb-16">
-                    {stats.map((stat, i) => (
-                        <motion.div
-                            key={stat.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.2 }}
-                            className="flex flex-col items-center text-center p-6 rounded-2xl hover:bg-white/5 transition-colors duration-300"
-                        >
-                            <div className="p-4 bg-primary/30 rounded-full mb-4 text-electric shadow-[0_0_15px_rgba(0,212,255,0.3)]">
-                                <stat.icon size={32} />
-                            </div>
-                            <h3 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-electric to-white mb-2">{stat.value}</h3>
-                            <p className="text-gray-400 font-medium tracking-wide uppercase text-sm">{stat.label}</p>
-                        </motion.div>
+                    {stats.map((stat) => (
+                        <Counter key={stat.id} {...stat} />
                     ))}
                 </div>
 
