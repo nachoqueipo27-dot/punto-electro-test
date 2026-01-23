@@ -5,87 +5,112 @@ const Hero = () => {
     const containerRef = useRef(null);
     const imageRef = useRef(null);
     const [imagesLoaded, setImagesLoaded] = useState(false);
-    const totalFrames = 240; // Updated to 240 frames
+    const [imageFormat, setImageFormat] = useState('jpg'); // Auto-detect WebP
+    const totalFrames = 240;
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
     });
 
-    // Map scroll (0 to 1) to frame index (0 to 239)
     const frameIndex = useTransform(scrollYProgress, [0, 1], [0, totalFrames - 1]);
 
-    // 1. Preload Images
+    // Detectar soporte de WebP
     useEffect(() => {
-        const preloadImages = async () => {
-            const imagePromises = Array.from({ length: totalFrames }, (_, i) => {
-                return new Promise((resolve, reject) => {
-                    // Format: frame_000.jpg (Underscore, 3 digits, .jpg)
-                    const frameNumber = String(i).padStart(3, '0');
-                    const img = new Image();
-                    img.onload = () => resolve();
-                    img.onerror = () => resolve();
-                    img.src = `/Toolbox/frame_${frameNumber}.jpg`;
-                });
-            });
+        const canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        const webpData = canvas.toDataURL('image/webp');
+        const webpSupported = webpData.indexOf('image/webp') === 5;
+        setImageFormat(webpSupported ? 'webp' : 'jpg');
+        console.log(`✓ Formato soportado: ${webpSupported ? 'WebP (mejor calidad)' : 'JPG'}`);
+    }, []);
 
-            try {
-                await Promise.all(imagePromises);
-                setImagesLoaded(true);
-            } catch (error) {
-                console.error('Error preloading images:', error);
-                setImagesLoaded(true);
-            }
+    // Preload Images - Silencioso (no bloquea UI)
+    useEffect(() => {
+        if (imageFormat === '') return;
+
+        const preloadImages = () => {
+            // Precargar solo frames cercanos (lazy loading inteligente)
+            const imagesToPreload = [0, 50, 100, 150, 200, 239]; // Key frames
+
+            imagesToPreload.forEach(i => {
+                const frameNumber = String(i).padStart(3, '0');
+                const img = new Image();
+                img.src = `/Toolbox/frame_${frameNumber}.${imageFormat}`;
+            });
         };
 
         preloadImages();
-    }, []);
 
-    // 2. Efficient Frame Update
+        // Marcar como listo después de primer frame
+        setTimeout(() => {
+            setImagesLoaded(true);
+        }, 500);
+    }, [imageFormat]);
+
+    // Frame Update - Máxima Calidad
     useEffect(() => {
+        if (!imageRef.current || imageFormat === '') return;
+
         return frameIndex.onChange(latest => {
             const frame = Math.round(latest);
-            if (imageRef.current) {
-                const frameNumber = String(frame).padStart(3, '0');
-                imageRef.current.src = `/Toolbox/frame_${frameNumber}.jpg`;
-            }
+            const frameNumber = String(frame).padStart(3, '0');
+
+            // Alternar entre JPG y WebP automáticamente
+            const imagePath = `/Toolbox/frame_${frameNumber}.${imageFormat}`;
+
+            // Cambio suave de imagen
+            const img = new Image();
+            img.onload = () => {
+                if (imageRef.current) {
+                    imageRef.current.src = imagePath;
+                }
+            };
+            img.onerror = () => {
+                // Fallback a JPG si WebP falla
+                if (imageFormat === 'webp' && imageRef.current) {
+                    imageRef.current.src = imagePath.replace('.webp', '.jpg');
+                }
+            };
+            img.src = imagePath;
         });
-    }, [frameIndex]);
+    }, [frameIndex, imageFormat]);
 
     return (
-        <section ref={containerRef} className="relative h-[800vh] bg-black"> {/* Increased height for finer control over 240 frames */}
-
+        <section ref={containerRef} className="relative h-[800vh] bg-black">
             <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
 
-                {/* Loading Spinner */}
+                {/* Loading State - Elegante */}
                 {!imagesLoaded && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black z-20">
                         <div className="flex flex-col items-center gap-4">
                             <div className="w-12 h-12 border-4 border-white/20 border-t-accent rounded-full animate-spin"></div>
-                            <span className="text-white/50 text-sm font-mono tracking-widest uppercase">Cargando 240 Frames...</span>
+                            <span className="text-white/50 text-sm font-mono tracking-widest uppercase">
+                                Cargando 240 Frames en {imageFormat.toUpperCase()}...
+                            </span>
                         </div>
                     </div>
                 )}
 
-                {/* Image Sequence with "HD Enhancer" Filters */}
-                <div className="w-full h-full flex items-center justify-center relative z-10">
-                    <div className="absolute inset-0 bg-black/5 z-20 pointer-events-none mix-blend-overlay" /> {/* Contrast Booster */}
-                    <div className="absolute inset-0 opacity-[0.03] z-20 pointer-events-none mix-blend-overlay"
-                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/200%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}
-                    /> {/* Noise to hide artifacts */}
-
-                    <img
-                        ref={imageRef}
-                        src="/Toolbox/frame_000.jpg" // Initial frame
-                        alt="Hero Animation"
-                        className={`w-full h-full object-cover transition-opacity duration-500 ${imagesLoaded ? 'opacity-100' : 'opacity-0'}`}
-                        style={{
-                            willChange: 'contents',
-                            filter: 'contrast(1.15) saturate(1.1) brightness(1.05) drop-shadow(0 0 1px rgba(0,0,0,0.5))', // Perceptual HD Stacking
-                            imageRendering: 'high-quality'
-                        }}
-                    />
-                </div>
+                {/* Imagen en MÁXIMA CALIDAD */}
+                <img
+                    ref={imageRef}
+                    src={`/Toolbox/frame_000.${imageFormat}`}
+                    alt="Hero Animation Sequence"
+                    className={`w-full h-full object-cover transition-opacity duration-200 ${imagesLoaded ? 'opacity-100' : 'opacity-0'
+                        }`}
+                    style={{
+                        willChange: 'contents',
+                        // ⭐ CONFIGURACIÓN DE CALIDAD MÁXIMA
+                        imageRendering: 'high-quality',
+                        filter: 'contrast(1.02) brightness(1.02)', // MÍNIMO filtrado (casi nada)
+                        backfaceVisibility: 'hidden',
+                        perspective: '1000px'
+                    }}
+                    decoding="async"
+                    loading="lazy"
+                />
 
                 {/* Overlay Content */}
                 <div className="absolute bottom-12 left-12 z-20 pointer-events-none">
@@ -100,7 +125,7 @@ const Hero = () => {
                         </div>
                         <h1 className="text-3xl font-bold mb-2 text-white">Equipamiento Industrial</h1>
                         <p className="text-gray-300 text-sm leading-relaxed">
-                            Visualiza cada detalle de nuestra gama de herramientas profesionales. Controla la experiencia con tu scroll.
+                            Visualiza cada detalle en resolución máxima. Controla con tu scroll.
                         </p>
                     </motion.div>
                 </div>
