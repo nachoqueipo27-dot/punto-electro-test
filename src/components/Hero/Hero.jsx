@@ -1,169 +1,165 @@
-import React, { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from 'framer-motion';
-import { Wrench, Plug, Cable, Link2, Hammer, Lightbulb, Box, Zap } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { Wrench, Plug, Cable, Link2, Hammer, Lightbulb, Box, Zap, Activity } from 'lucide-react';
 
 const Hero = () => {
-    const sectionRef = useRef(null);
-    const [activeSection, setActiveSection] = useState(0);
-
-    const { scrollY } = useScroll();
-
-    // Detectar sección activa basado en scrollY absoluto
-    useMotionValueEvent(scrollY, "change", (latest) => {
-        const sectionHeight = window.innerHeight;
-
-        if (latest < sectionHeight) {
-            setActiveSection(0);
-        } else if (latest < sectionHeight * 2) {
-            setActiveSection(1);
-        } else {
-            setActiveSection(2);
-        }
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
     });
 
-    // Usar scrollY directamente para animaciones más suaves
-    const toolProgress = useTransform(scrollY, [0, 600], [0, 1]); // 600px de scroll = animación completa
+    // Smooth scroll progress
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20 });
 
-    // Tool Animation mejorada y predecible
-    const useToolAnimation = (initial, final, rotation) => {
-        const x = useTransform(toolProgress, [0, 1], [initial.x, final.x]);
-        const y = useTransform(toolProgress, [0, 1], [initial.y, final.y]);
-        const rotate = useTransform(toolProgress, [0, 1], [0, rotation]);
-        return { x, y, rotate };
-    };
+    // --- State 1: Solutions (0 - 33%) ---
+    const opacity1 = useTransform(smoothProgress, [0, 0.25], [1, 0]);
+    const scale1 = useTransform(smoothProgress, [0, 0.25], [1, 0.8]);
+
+    // --- State 2: Quality (33% - 66%) ---
+    const opacity2 = useTransform(smoothProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
+    const y2 = useTransform(smoothProgress, [0.3, 0.5, 0.7], [50, 0, -50]);
+
+    // --- State 3: Service (66% - 100%) ---
+    const opacity3 = useTransform(smoothProgress, [0.65, 0.75, 1], [0, 1, 1]);
+    const scale3 = useTransform(smoothProgress, [0.65, 1], [0.9, 1]);
+
+    // --- Dynamic Backgrounds ---
+    // Interpolate colors based on scroll
+    // 0 -> #2D3E50 (Dark)
+    // 0.5 -> #0F1922 (Darker/Blueish)
+    // 1 -> #1A2847 (Deep Blue)
+    // We add overlays for specific tinting per section
+    const bgGradient1 = useTransform(smoothProgress, [0, 0.3], [1, 0]); // Fade out first bg layer
+    const bgGradient2 = useTransform(smoothProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]); // Fade in/out second
+    const bgGradient3 = useTransform(smoothProgress, [0.7, 1], [0, 1]); // Fade in last
+
+    // --- Tool Animations (Multi-stage) ---
+    // They drift and rotate constantly but shift positions drastically between stages
+    const toolsY = useTransform(smoothProgress, [0, 1], [0, -400]);
+    const toolsRotate = useTransform(smoothProgress, [0, 1], [0, 180]);
 
     const tools = [
-        { Icon: Wrench, color: "text-white", opacity: "opacity-100", init: { x: -100, y: -80 }, final: { x: -500, y: -300 }, rot: -140 },
-        { Icon: Plug, color: "text-electric", opacity: "opacity-90", init: { x: 100, y: -100 }, final: { x: 500, y: -280 }, rot: 200 },
-        { Icon: Cable, color: "text-accent", opacity: "opacity-95", init: { x: -80, y: 120 }, final: { x: -400, y: 400 }, rot: 260 },
-        { Icon: Link2, color: "text-white", opacity: "opacity-90", init: { x: 100, y: 140 }, final: { x: 400, y: 380 }, rot: -200 },
-        { Icon: Hammer, color: "text-gray-400", opacity: "opacity-75", init: { x: -180, y: 20 }, final: { x: -550, y: 100 }, rot: 380 },
-        { Icon: Lightbulb, color: "text-electric", opacity: "opacity-100", init: { x: 180, y: 40 }, final: { x: 550, y: 180 }, rot: -110 },
-        { Icon: Box, color: "text-accent", opacity: "opacity-80", init: { x: 0, y: -140 }, final: { x: 0, y: -450 }, rot: 110 },
-        { Icon: Zap, color: "text-white", opacity: "opacity-85", init: { x: 0, y: 180 }, final: { x: 0, y: 450 }, rot: -290 },
-    ];
-
-    const titles = [
-        { main: "Soluciones Eléctricas", sub: "Profesionales y Confiables" },
-        { main: "Materiales de", sub: "Calidad Premium" },
-        { main: "Servicio Técnico", sub: "Especializado" },
+        { Icon: Wrench, color: "text-white", x: "10%", y: "20%" },
+        { Icon: Zap, color: "text-energy", x: "80%", y: "15%" },
+        { Icon: Plug, color: "text-electric", x: "20%", y: "60%" },
+        { Icon: Activity, color: "text-white", x: "70%", y: "70%" },
+        { Icon: Cable, color: "text-accent", x: "40%", y: "40%" },
     ];
 
     return (
-        <React.Fragment>
-            {/* HERO CONTAINER - Solo 100vh */}
-            <section ref={sectionRef} id="hero" className="relative w-full h-screen overflow-hidden">
-                <div className="w-full h-full overflow-hidden flex flex-col justify-center">
+        <section ref={containerRef} className="relative h-[300vh]">
+            <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-[#0F1922]">
 
-                    {/* --- 1. Dark Commercial Background --- */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#2D3E50] via-[#1A2847] to-[#0F1922]" />
+                {/* --- 1. Dynamic Backgrounds Layers --- */}
+                {/* Layer 1: Dark Blue Electric */}
+                <motion.div style={{ opacity: bgGradient1 }} className="absolute inset-0 bg-gradient-to-br from-[#2D3E50] via-[#1A2847] to-[#0F1922] z-0" />
 
-                    {/* Subtle Pattern */}
-                    <div className="absolute inset-0 bg-[linear-gradient(45deg,#36558F_1px,transparent_1px)] [background-size:50px_50px] opacity-[0.08] pointer-events-none" />
+                {/* Layer 2: Mint/Cyan Tint */}
+                <motion.div style={{ opacity: bgGradient2 }} className="absolute inset-0 bg-gradient-to-bl from-[#1A2847] via-[#0F1922] to-[#004a5c] z-0" />
 
-                    {/* Dynamic Lighting Effects */}
-                    <motion.div
-                        style={{ y: useTransform(scrollY, [0, 800], [0, 300]) }}
-                        className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] bg-electric rounded-full blur-[150px] pointer-events-none opacity-20 mix-blend-screen"
-                    />
-                    <motion.div
-                        style={{ y: useTransform(scrollY, [0, 800], [0, -250]) }}
-                        className="absolute bottom-[-20%] right-[5%] w-[700px] h-[700px] bg-energy rounded-full blur-[150px] pointer-events-none opacity-15 mix-blend-screen"
-                    />
+                {/* Layer 3: Energy Orange Tint */}
+                <motion.div style={{ opacity: bgGradient3 }} className="absolute inset-0 bg-gradient-to-tr from-[#2a120a] via-[#1A2847] to-[#0F1922] z-0" />
 
-                    {/* --- 2. Floating Tools with Glow --- */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                        {tools.map((item, index) => {
-                            const anim = useToolAnimation(item.init, item.final, item.rot);
-                            return (
-                                <motion.div
-                                    key={index}
-                                    style={anim}
-                                    className={`absolute ${item.color} ${item.opacity} filter drop-shadow-[0_0_20px_rgba(0,212,255,0.2)]`}
-                                >
-                                    <item.Icon
-                                        strokeWidth={1.5}
-                                        className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40"
-                                    />
-                                </motion.div>
-                            );
-                        })}
-                    </div>
+                {/* Shared Background Pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:40px_40px] pointer-events-none z-0" />
 
-                    {/* --- 3. Typography & Messaging --- */}
-                    <div className="relative z-30 w-full max-w-7xl mx-auto px-6 text-center">
-                        <div className="h-[250px] md:h-[300px] relative flex items-center justify-center">
-                            <AnimatePresence mode="wait">
-                                {titles.map((t, index) => (
-                                    activeSection === index && (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, scale: 0.95, y: 40, filter: "blur(10px)" }}
-                                            animate={{
-                                                opacity: 1,
-                                                scale: 1,
-                                                y: 0,
-                                                filter: "blur(0px)",
-                                            }}
-                                            exit={{
-                                                opacity: 0,
-                                                scale: 1.05,
-                                                y: -40,
-                                                filter: "blur(10px)",
-                                            }}
-                                            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                                            className="absolute w-full flex flex-col items-center"
-                                        >
-                                            <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9] drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] mb-6">
-                                                {t.main}
-                                            </h1>
-                                            <h2 className="text-3xl md:text-5xl font-light text-white/70 tracking-wide drop-shadow-md">
-                                                {t.sub}
-                                            </h2>
-                                        </motion.div>
-                                    )
-                                ))}
-                            </AnimatePresence>
+                {/* --- 2. Floating Tools (Consistent across scroll but moving) --- */}
+                <motion.div
+                    style={{ y: toolsY, rotate: toolsRotate }}
+                    className="absolute inset-0 w-full h-full pointer-events-none z-10"
+                >
+                    {tools.map((t, i) => (
+                        <div key={i} className={`absolute ${t.color} opacity-20`} style={{ left: t.x, top: t.y }}>
+                            <t.Icon size={120} strokeWidth={1} />
                         </div>
+                    ))}
+                </motion.div>
 
-                        {/* CTA Button */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4, duration: 0.8 }}
-                            className="relative mt-8 md:mt-12 flex flex-col items-center"
-                        >
-                            <a
-                                href="#quote"
-                                className="group relative bg-energy hover:bg-[#FF5520] text-white text-lg md:text-xl font-bold px-16 py-6 shadow-[0_20px_50px_-12px_rgba(255,107,53,0.5)] hover:shadow-[0_30px_70px_-12px_rgba(255,107,53,0.7)] transition-all duration-300 transform hover:-translate-y-2 overflow-hidden rounded-lg"
-                            >
-                                <span className="relative z-10 tracking-widest uppercase">Solicitar Cotización</span>
-                                <div className="absolute top-0 -left-[100%] w-[100%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 group-hover:left-[100%] transition-all duration-700 ease-in-out"></div>
-                            </a>
-                        </motion.div>
+                {/* --- 3. Content Stages --- */}
+
+                {/* STAGE 1: Solutions */}
+                <motion.div
+                    style={{ opacity: opacity1, scale: scale1 }}
+                    className="absolute z-20 text-center px-4 max-w-5xl"
+                >
+                    <div className="inline-block px-4 py-1 rounded-full border border-electric/30 bg-electric/10 text-electric font-mono text-sm mb-6 tracking-widest uppercase">
+                        Ingeniería y Distribución
                     </div>
+                    <h1 className="text-7xl md:text-9xl font-bold text-white tracking-tight leading-none mb-6 drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                        SOLUCIONES<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric to-white">ELÉCTRICAS</span>
+                    </h1>
+                    <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">
+                        Potencia, seguridad y eficiencia para proyectos industriales de alto nivel.
+                    </p>
+                </motion.div>
 
-                    {/* --- 4. Scroll Indicator --- */}
-                    <motion.div
-                        animate={{ opacity: activeSection === 2 ? 0 : 1 }}
-                        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20"
+                {/* STAGE 2: Products */}
+                <motion.div
+                    style={{ opacity: opacity2, y: y2 }}
+                    className="absolute z-20 text-center px-4 max-w-5xl"
+                >
+                    <div className="inline-block px-4 py-1 rounded-full border border-accent/30 bg-accent/10 text-accent font-mono text-sm mb-6 tracking-widest uppercase">
+                        Catálogo Certificado
+                    </div>
+                    <h2 className="text-7xl md:text-9xl font-bold text-white tracking-tight leading-none mb-6">
+                        MATERIALES<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-white">PREMIUM</span>
+                    </h2>
+                    <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">
+                        Stock permanente de las marcas líderes mundiales.
+                    </p>
+                </motion.div>
+
+                {/* STAGE 3: Service */}
+                <motion.div
+                    style={{ opacity: opacity3, scale: scale3 }}
+                    className="absolute z-20 text-center px-4 max-w-5xl"
+                >
+                    <div className="inline-block px-4 py-1 rounded-full border border-energy/30 bg-energy/10 text-energy font-mono text-sm mb-6 tracking-widest uppercase">
+                        Soporte Experto 24/7
+                    </div>
+                    <h2 className="text-7xl md:text-9xl font-bold text-white tracking-tight leading-none mb-6">
+                        SERVICIO<br />
+                        DISEÑADO PARA <span className="text-energy">TI</span>
+                    </h2>
+                    <motion.a
+                        href="#quote"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="inline-flex items-center justify-center px-10 py-5 bg-energy text-white font-bold text-xl rounded-full shadow-[0_0_30px_rgba(255,107,53,0.4)] hover:shadow-[0_0_50px_rgba(255,107,53,0.6)] transition-all mt-8"
                     >
-                        <span className="text-electric text-xs font-bold tracking-[0.3em] uppercase">Explorar</span>
-                        <div className="w-[2px] h-16 bg-gradient-to-b from-electric/10 via-electric/40 to-electric/5 overflow-hidden">
-                            <motion.div
-                                animate={{ y: [-64, 64] }}
-                                transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-                                className="w-full h-1/2 bg-electric shadow-[0_0_10px_#00D4FF]"
-                            />
-                        </div>
-                    </motion.div>
+                        Solicitar Asesoría
+                    </motion.a>
+                </motion.div>
 
+
+                {/* --- 4. Progression Indicators --- */}
+                {/* Right Side Dots */}
+                <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-30">
+                    <motion.div style={{ opacity: opacity1 }} className="w-3 h-3 bg-electric rounded-full shadow-[0_0_8px_cyan]" />
+                    <motion.div style={{ opacity: opacity2 }} className="w-3 h-3 bg-accent rounded-full shadow-[0_0_8px_#C5E0D8]" />
+                    <motion.div style={{ opacity: opacity3 }} className="w-3 h-3 bg-energy rounded-full shadow-[0_0_8px_orange]" />
                 </div>
-            </section>
 
-            {/* Separador mínimo (reemplaza la sección de transición) */}
-            <div className="h-px bg-gradient-to-r from-transparent via-energy/30 to-transparent" />
-        </React.Fragment>
+                {/* Scroll hint (fades out at end) */}
+                <motion.div
+                    style={{ opacity: useTransform(scrollYProgress, [0.8, 1], [1, 0]) }}
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30"
+                >
+                    <span className="text-xs uppercase tracking-widest text-white/50">Scroll</span>
+                    <div className="w-[1px] h-12 bg-white/20 overflow-hidden">
+                        <motion.div
+                            animate={{ y: [-48, 48] }}
+                            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                            className="w-full h-1/2 bg-white"
+                        />
+                    </div>
+                </motion.div>
+
+            </div>
+        </section>
     );
 };
 
